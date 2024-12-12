@@ -48,7 +48,7 @@ cd frontend
 You can get this variables in google console
 
 ```bash
-VITE_APP_GOOGLE_CLIENT_ID=
+VITE_API_GOOGLE_CLIENT_ID=
 VITE_API_BACKEND_URL=http://localhost:3000/api
 
 ```
