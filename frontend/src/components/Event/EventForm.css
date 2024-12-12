@@ -1,0 +1,120 @@
+/* Overlay */
+.modern-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Popup Modal */
+.modern-popup {
+  background: #fff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Close Button */
+.modern-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+}
+
+.modern-close-btn:hover {
+  color: #000;
+}
+
+/* Heading */
+.modern-popup h2 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+/* Form Styling */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: border-color 0.3s ease-in-out;
+}
+
+.form-group input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.5);
+}
+
+/* Submit Button */
+.modern-submit-btn {
+  background: linear-gradient(45deg, #007bff, #0056b3);
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.modern-submit-btn:hover {
+  background: linear-gradient(45deg, #0056b3, #003f7f);
+}
+
+
+.error-text {
+  color: #d9534f;
+  font-size: 0.875rem;
+  margin-top: 5px;
+}
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

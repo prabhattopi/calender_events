@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  
+  .App {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    /* background: white; */
+    border-radius: 8px;
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); */
+  }
+
+  .google-login-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: white;
+    color: #4285f4;
+    border: 2px solid #4285f4;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .google-login-button:hover {
+    background: #f1f3f4;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .google-login-button:active {
+    background: #e8e8e8;
+  }
+  
+  .google-icon {
+    font-size: 20px; /* Adjust the size of the icon */
+  }
+  
+  @media (max-width: 768px) {
+    .google-login-button {
+      font-size: 14px;
+      padding: 8px 16px;
+    }
+  
+    .google-icon {
+      font-size: 18px;
+    }
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .btn {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .event-form {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .event-form input,
+  .event-form button {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+  }
+  
+  .event-form button {
+    background-color: #34a853;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .event-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .event-table th,
+  .event-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .event-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+  
+.container {
+  margin: 0 auto;
+  padding: 1rem;
+  max-width: 800px;
+}
+.container-login {
+  margin: 0 auto;
+  padding: 1rem;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.create-button,
+.login-button {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.create-button:hover,
+.login-button:hover {
+  background-color: #0056b3;
+}
+/* Table Container */
+.table-container {
+  overflow-x: auto;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+/* Responsive Table */
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+  min-width: 600px;
+}
+
+.responsive-table th,
+.responsive-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #ddd;
+  white-space: nowrap; /* Prevents wrapping by default */
+  overflow: hidden; /* Hides overflowed content */
+  text-overflow: ellipsis; /* Adds ellipsis for long text */
+  max-width: 200px; /* Adjust as needed */
+}
+
+.responsive-table th {
+  background-color: #4285f4;
+  color: white;
+  font-weight: bold;
+}
+
+.responsive-table .even-row {
+  background-color: #f9f9f9;
+}
+
+.responsive-table .odd-row {
+  background-color: #ffffff;
+}
+
+.responsive-table tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* Tooltip for Overflowed Text */
+.responsive-table td:hover {
+  position: relative;
+}
+
+.responsive-table td:hover::after {
+  content: attr(data-tooltip); /* Displays full text as a tooltip */
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #333;
+  color: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  white-space: normal;
+  max-width: 300px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
