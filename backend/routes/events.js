@@ -4,6 +4,89 @@ const router = express.Router();
 const Event = require("../models/Events");
 const User = require('../models/Users');
 
+
+
+
+
+/**
+ * Webhook endpoint to handle notifications from Google Calendar.
+ */
+router.post("/google-calendar-webhook", async (req, res) => {
+  const resourceState = req.headers["x-goog-resource-state"];
+  const channelId = req.headers["x-goog-channel-id"];
+
+  if (resourceState === "sync") {
+    return res.status(200).send();
+  }
+
+  try {
+    const userId = channelId.split("-")[1];
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const oauth2Client = new google.auth.OAuth2();
+    oauth2Client.setCredentials({ access_token: user.accessToken });
+
+    const calendar = google.calendar({ version: "v3", auth: oauth2Client });
+    const eventsResponse = await calendar.events.list({
+      calendarId: "primary",
+      singleEvents: true,
+      orderBy: "startTime",
+    });
+
+    const googleEvents = eventsResponse.data.items || [];
+    const googleEventIds = new Set(googleEvents.map((event) => event.id));
+
+    const dbEvents = await Event.find({ userId, delete: false });
+    const dbEventIds = new Set(dbEvents.map((event) => event.eventId));
+
+    // Bulk update for matching events
+    const bulkUpdates = googleEvents
+      .filter((event) => dbEventIds.has(event.id))
+      .map((event) => ({
+        updateOne: {
+          filter: { eventId: event.id },
+          update: {
+            $set: {
+              title: event.summary,
+              startDate: (event.start.dateTime || event.start.date).split("T")[0],
+              startTime: event.start.dateTime
+                ? event.start.dateTime.split("T")[1].slice(0, 5)
+                : null,
+              endDate: (event.end.dateTime || event.end.date).split("T")[0],
+              endTime: event.end.dateTime
+                ? event.end.dateTime.split("T")[1].slice(0, 5)
+                : null,
+            },
+          },
+        },
+      }));
+
+    if (bulkUpdates.length) {
+      await Event.bulkWrite(bulkUpdates);
+    }
+
+    // Mark events as deleted if not in Google Calendar
+    const eventsToDelete = [...dbEventIds].filter((id) => !googleEventIds.has(id));
+    if (eventsToDelete.length) {
+      await Event.updateMany(
+        { eventId: { $in: eventsToDelete } },
+        { $set: { delete: true } }
+      );
+    }
+
+    console.log(`Database synchronized with ${googleEvents.length} events.`);
+    res.status(200).send();
+  } catch (error) {
+    console.error("Error handling webhook notification:", error);
+    res.status(500).send("Error processing notification");
+  }
+});
+
+
 /**
  * Creates a new event in Google Calendar and saves the event details in the database.
  *
@@ -87,80 +170,20 @@ router.post("/create-event", async (req, res) => {
  *
  * @throws Will throw an error if the user is not found or if there is an error fetching events.
  */
+
+
 router.post("/fetch-events", async (req, res) => {
   const { userId } = req.body;
 
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const oauth2Client = new google.auth.OAuth2();
-    oauth2Client.setCredentials({ access_token: user.accessToken });
-
-    const calendar = google.calendar({ version: "v3", auth: oauth2Client });
-    const eventsResponse = await calendar.events.list({
-      calendarId: "primary",
-      singleEvents: true,
-      orderBy: "startTime",
-    });
-
-    const googleEvents = eventsResponse.data.items || [];
-    const googleEventIds = googleEvents.map((event) => event.id);
-
-    // Fetch non-deleted events from the database
-    const dbEvents = await Event.find({ userId, delete: false });
-    const dbEventIds = dbEvents.map((event) => event.eventId);
-
-    // Identify events that need updating (present in both Google and DB)
-    const matchingGoogleEvents = googleEvents.filter((event) =>
-      dbEventIds.includes(event.id)
-    );
-
-    // Update matching events in the database
-    const bulkOperations = matchingGoogleEvents.map((event) => ({
-      updateOne: {
-        filter: { eventId: event.id },
-        update: {
-          $set: {
-            title: event.summary,
-            startDate: (event.start.dateTime || event.start.date).split("T")[0],
-            startTime: event.start.dateTime
-              ? event.start.dateTime.split("T")[1].slice(0, 5)
-              : null,
-            endDate: (event.end.dateTime || event.end.date).split("T")[0],
-            endTime: event.end.dateTime
-              ? event.end.dateTime.split("T")[1].slice(0, 5)
-              : null,
-          },
-        },
-      },
-    }));
-
-    if (bulkOperations.length > 0) {
-      await Event.bulkWrite(bulkOperations);
-    }
-
-    // Mark events in the database as deleted if they are not in Google Calendar
-    const eventsToDelete = dbEventIds.filter((id) => !googleEventIds.includes(id));
-    if (eventsToDelete.length > 0) {
-      await Event.updateMany(
-        { eventId: { $in: eventsToDelete } },
-        { $set: { delete: true } }
-      );
-    }
-
-    // Fetch updated non-deleted events from the database
-    const updatedEvents = await Event.find({ userId, delete: false }).sort({
+    const events = await Event.find({ userId, delete:false}).sort({
       startDate: -1,
       startTime: -1,
     });
-
-    res.status(200).json({ events: updatedEvents });
+    res.status(200).json({ events });
   } catch (error) {
-    console.error("Error fetching user events:", error);
-    res.status(500).json({ error: "Failed to fetch events" });
+    console.error("Error fetching events:", error);
+    res.status(500).json({ message: "Failed to fetch events", error });
   }
 });
 

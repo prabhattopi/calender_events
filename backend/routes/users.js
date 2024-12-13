@@ -68,6 +68,20 @@ router.post('/google-login', async (req, res) => {
       await user.save();
     }
 
+      // Automatically start watching Google Calendar events
+      const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+      const watchResponse = await calendar.events.watch({
+        calendarId: 'primary',
+        requestBody: {
+          id: `channel-${user._id}-${Date.now()}`, // Unique channel ID
+          type: 'webhook',
+          address: process.env.WEBHOOK_URL, // Your public webhook URL
+        },
+      });
+  
+      console.log('Watch started successfully:', watchResponse.data);
+
     // Return success response with user ID and expiry date
     res.status(200).json({
       message: 'Google login successful',
