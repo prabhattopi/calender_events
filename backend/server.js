@@ -5,6 +5,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const eventRoutes = require('./routes/events');
 const userRoutes = require('./routes/users');
+const mappingRoutes = require('./routes/mappings');
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 
 app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/mapping', mappingRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
